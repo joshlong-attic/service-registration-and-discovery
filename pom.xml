@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-parent</artifactId>
+        <version>1.0.0.BUILD-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>microservices</groupId>
+    <artifactId>service-registration-and-discovery</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>photo-service</module>
+        <module>bookmark-service</module>
+        <module>passport-service</module>
+        <module>eureka-service</module>
+
+
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+         <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
+        <spring-cloud.version>1.0.0.BUILD-SNAPSHOT</spring-cloud.version>
+    </properties>
+
+
+    <repositories>
+        <repository>
+            <id>repo.spring.io-milestones</id>
+            <name>repo.spring.io-milestones</name>
+            <url>http://repo.spring.io/libs-milestone-local</url>
+        </repository>
+        <repository>
+            <id>repo.spring.io-snapshots</id>
+            <name>repo.spring.io-snapshots</name>
+            <url>http://repo.spring.io/libs-snapshot-local</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-libs-milestones</id>
+            <url>http://repo.spring.io/libs-milestone-local</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-libs-release</id>
+            <url>http://repo.spring.io/libs-release-local</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

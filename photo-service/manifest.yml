@@ -1,0 +1,15 @@
+---
+applications:
+- name: photo-service
+  memory: 512M
+  instances: 1
+  host: photo-service-${random-word}
+  domain: cfapps.io
+  path: target/photo-service.jar
+  services:
+      - eureka-service
+      - photo-service-mongodb
+  env:
+    SPRING_PROFILES_ACTIVE: cloud
+    DEBUG: "true"
+    debug: "true"
