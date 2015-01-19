@@ -22,7 +22,7 @@ function deploy_app(){
 
   APP_NAME=$1
   cd $APP_NAME
-  cf push $APP_NAME  --no-start
+  cf push $APP_NAME  --no-start -b https://github.com/cloudfoundry/java-buildpack.git
   APPLICATION_DOMAIN=`app_domain $APP_NAME`
   echo determined that application_domain for $APP_NAME is $APPLICATION_DOMAIN.
   cf env $APP_NAME | grep APPLICATION_DOMAIN || cf set-env $APP_NAME APPLICATION_DOMAIN $APPLICATION_DOMAIN

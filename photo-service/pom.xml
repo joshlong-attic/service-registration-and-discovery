@@ -10,6 +10,9 @@
     <name>service-registration-and-discovery:photo-service</name>
     <artifactId>photo-service</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <start-class>photos.Application</start-class>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -32,4 +35,5 @@
             <artifactId>h2</artifactId>
         </dependency>
     </dependencies>
+
 </project>

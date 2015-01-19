@@ -12,6 +12,9 @@
     <name>service-registration-and-discovery:eureka-service</name>
     <artifactId>eureka-service</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <start-class>registry.Application</start-class>
+    </properties>
 
     <dependencies>
 

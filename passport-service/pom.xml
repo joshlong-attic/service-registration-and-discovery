@@ -13,6 +13,9 @@
 
     <artifactId>passport-service</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <start-class>passport.Application</start-class>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -11,6 +11,9 @@
     <name>service-registration-and-discovery:bookmark-service</name>
 
     <artifactId>bookmark-service</artifactId>
+    <properties>
+        <start-class>bookmarks.Application</start-class>
+    </properties>
 
     <packaging>jar</packaging>
 
