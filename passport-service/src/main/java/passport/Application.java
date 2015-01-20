@@ -1,24 +1,23 @@
 package passport;
 
-import com.netflix.appinfo.InstanceInfo;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.FeignConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
 import java.util.List;
 
 @SpringBootApplication
@@ -26,7 +25,9 @@ import java.util.List;
 public class Application extends FeignConfiguration {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        new SpringApplicationBuilder(Application.class)
+                .web(false)
+                .run(args);
     }
 
     @Bean
@@ -35,39 +36,30 @@ public class Application extends FeignConfiguration {
     }
 }
 
-@RestController
-class Client {
+@Component
+class DiscoveryClientExample implements CommandLineRunner {
 
     @Autowired
-    private com.netflix.discovery.DiscoveryClient discoveryClient;
+    private DiscoveryClient discoveryClient;
+
+    @Override
+    public void run(String... strings) throws Exception {
+        List<ServiceInstance> photoServices = discoveryClient.getInstances("photo-service");
+        photoServices.forEach(System.out::println);
+
+        List<ServiceInstance> bookmarkServices = discoveryClient.getInstances("bookmark-service");
+        bookmarkServices.forEach(System.out::println);
+    }
+}
+
+@Component
+class RestTemplateExample implements CommandLineRunner {
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    private BookmarkClient bookmarkClient;
-
-    // TODO NB: don't call this until about 30s after it's started up!!!
-    // the load balancers need to refresh their list of servers otherwise they'll fail.
-    @RequestMapping("/connect")
-    public void connect() throws Exception {
-
-        // get the info directly from the Eureka DiscoveryClient
-        InstanceInfo photoServiceInstanceInfo = discoveryClient.getNextServerFromEureka(
-                "photo-service", false);
-        System.out.println("photoService: " + ToStringBuilder.reflectionToString(photoServiceInstanceInfo, ToStringStyle.MULTI_LINE_STYLE));
-
-        InstanceInfo bookmarkServiceInstanceInfo = discoveryClient.getNextServerFromEureka(
-                "bookmark-service", false);
-        System.out.println("bookmarkService: " + ToStringBuilder.reflectionToString(
-                bookmarkServiceInstanceInfo, ToStringStyle.MULTI_LINE_STYLE));
-
-        InstanceInfo.InstanceStatus bookmarkStatus = bookmarkServiceInstanceInfo.getStatus();
-        System.out.println("bookmark status: " + bookmarkStatus);
-
-        InstanceInfo.InstanceStatus photoStatus = photoServiceInstanceInfo.getStatus();
-        System.out.println("photo status: " + photoStatus);
-
+    @Override
+    public void run(String... strings) throws Exception {
         // use the "smart" Eureka-aware RestTemplate
         ResponseEntity<List<Bookmark>> exchange =
                 this.restTemplate.exchange(
@@ -78,19 +70,22 @@ class Client {
                         },
                         (Object) "mstine");
 
-        enumerateBookmarks("mstine", exchange.getBody());
-
-        enumerateBookmarks("jlong", bookmarkClient.getBookmarks("jlong"));
-    }
-
-    protected void enumerateBookmarks(String user, Collection<Bookmark> bookmark) {
-        System.out.println ( "--------------------------------------") ;
-        System.out.println("found " + bookmark.size() + " bookmarks for " + user + ".");
-        bookmark.forEach(System.out::println);
+        exchange.getBody().forEach(System.out::println);
     }
 
 }
 
+@Component
+class FeignExample implements CommandLineRunner {
+
+    @Autowired
+    private BookmarkClient bookmarkClient;
+
+    @Override
+    public void run(String... strings) throws Exception {
+        this.bookmarkClient.getBookmarks("jlong").forEach(System.out::println);
+    }
+}
 
 interface BookmarkClient {
 
