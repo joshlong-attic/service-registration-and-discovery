@@ -7,8 +7,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.cloud.netflix.feign.FeignConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,8 @@ import java.util.List;
 
 @SpringBootApplication
 @EnableEurekaClient
-public class Application extends FeignConfiguration {
+@EnableFeignClients
+public class Application {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(Application.class)
@@ -30,10 +31,6 @@ public class Application extends FeignConfiguration {
                 .run(args);
     }
 
-    @Bean
-    BookmarkClient bookmarkClient() {
-        return loadBalance(BookmarkClient.class, "http://bookmark-service");
-    }
 }
 
 @Component
@@ -87,6 +84,7 @@ class FeignExample implements CommandLineRunner {
     }
 }
 
+@FeignClient("bookmark-service")
 interface BookmarkClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{userId}/bookmarks")
