@@ -1,5 +1,6 @@
 package passport;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,7 +31,6 @@ public class Application {
                 .web(false)
                 .run(args);
     }
-
 }
 
 @Component
@@ -41,11 +41,12 @@ class DiscoveryClientExample implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        List<ServiceInstance> photoServices = discoveryClient.getInstances("photo-service");
-        photoServices.forEach(System.out::println);
-
-        List<ServiceInstance> bookmarkServices = discoveryClient.getInstances("bookmark-service");
-        bookmarkServices.forEach(System.out::println);
+        discoveryClient.getInstances("photo-service").forEach((ServiceInstance s) -> {
+            System.out.println(ToStringBuilder.reflectionToString(s));
+        });
+        discoveryClient.getInstances("bookmark-service").forEach((ServiceInstance s) -> {
+            System.out.println(ToStringBuilder.reflectionToString(s));
+        });
     }
 }
 
